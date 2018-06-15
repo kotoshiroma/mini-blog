@@ -40,6 +40,8 @@ abstract class Controller
       $this->forward404();
     }
     if ($this->needsAuthentication($action) && !$this->session->isAuthenticated()) {
+      // Application::run()のcatch句で、/account/signinが実行される <=ここでリダイレクトさせたらダメなのか
+      echo "needs Exception";
       throw new UnauthorizedActionException();
     }
 
@@ -50,7 +52,7 @@ abstract class Controller
   protected function needsAuthentication($action)
   {
     if ($this->auth_actions === true || 
-       (is_array($this->auth_actions && in_array($action, $this->auth_actions)))) {
+       (is_array($this->auth_actions) && in_array($action, $this->auth_actions))) {
       return true;
     }
     return false;
@@ -92,11 +94,12 @@ abstract class Controller
     $this->response->setHttpHeader('Location', $url);
   }
 
+  /* トークン生成、セッション格納、トークン返却 */
   protected function generateCsrfToken($form_name)
   {
     $key = 'csrf_tokens' . $form_name;
-    $tokens = $this->session->get($key, array());
 
+    $tokens = $this->session->get($key, array());
     if (count($tokens) >= 10) {
       array_shift($tokens);
     }
@@ -107,6 +110,7 @@ abstract class Controller
     return $token;
   }
 
+  /* 渡されたトークンが、セッションのトークンに含まれているかチェック */
   protected function checkCsrfToken($form_name, $token)
   {
     $key = 'csrf_tokens' . $form_name;

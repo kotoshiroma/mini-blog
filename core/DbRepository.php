@@ -16,8 +16,6 @@ abstract class DbRepository
 
   public function execute($sql, $params = array())
   {
-    // print_r($sql);
-    // exit;
     $stmt = $this->con->prepare($sql); // PDO::prepare() ※戻り値はPDOStatementオブジェクト
     $stmt->execute($params);           // PDOStatuement::execute() ※実行するとオブジェクトに結果セットが格納される
     return $stmt;
