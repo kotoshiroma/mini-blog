@@ -1,0 +1,9 @@
+# IfModuleは、mod_rewrite.cが存在する場合は、という意味のディレクティブ
+<IfModule mod_rewrite.c>
+  # デフォルトの設定値はOff
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENMA} !-f
+  # RewriteRuleディレクティブは、URLの書き換えを行うディレクティブ
+  # QSAやLは「フラグ」と呼ばれるもの
+  RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
