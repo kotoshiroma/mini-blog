@@ -2,6 +2,13 @@
 
 class UserRepository extends DbRepository
 {
+  /*
+    insert
+    hashPassword
+    fetchByUserName
+    isUniqueUserName
+    fetchAllFollowingsByUserId
+   */
   public function insert($user_name, $password)
   {
     $password = $this->hashPassword($password);
@@ -42,5 +49,20 @@ class UserRepository extends DbRepository
       return true;
     }
     return false;
+  }
+
+  public function fetchAllFollowingsByUserId($user_id)
+  {
+    $sql = "
+      SELECT u.*
+      FROM
+        user u LEFT JOIN
+        following f ON 
+          u.id = f.following_id
+      WHERE
+        f.user_id = :user_id
+    ";
+
+    return $this->fetchAll($sql, [':user_id' => $user_id]);
   }
 }

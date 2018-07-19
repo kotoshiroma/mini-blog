@@ -24,10 +24,16 @@ class StatusRepository extends DbRepository
       SELECT
         s.*, u.user_name
       FROM
-        status s LEFT JOIN
-        user u ON
-          s.user_id = u.id
+        status s
+          LEFT JOIN
+        user u
+          ON s.user_id = u.id
+          LEFT JOIN
+        following f
+          ON s.user_id = f.following_id AND
+             f.user_id = :user_id
       WHERE
+        f.user_id = :user_id OR
         u.id = :user_id
       ORDER BY
         s.created_at DESC

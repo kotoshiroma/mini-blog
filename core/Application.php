@@ -121,7 +121,8 @@ abstract class Application {
     try {
 
       $params = $this->router->resolve($this->request->getPathInfo());
-      
+      // print_r($params);
+
       if ($params === false) {
         throw new HttpNotFoundException('No route found for' . $this->request->getPathInfo());
       }
@@ -137,9 +138,6 @@ abstract class Application {
       list($controller, $action) = $this->login_action;
       $this->runAction($controller, $action);
     } 
-    // catch (Exception $e) {
-    //   echo '!!';
-    // }
 
     $this->response->send();
   }

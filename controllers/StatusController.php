@@ -54,17 +54,29 @@ class StatusController extends Controller
     ], 'index');
   }
 
-  public function userAction($params)
+  public function userAction($params) // TODO:($paramsの仕組みを調べる)
   {
+    // ユーザが削除されている場合も考えられるため、存在チェックを行う。(ユーザ名とidどちらを使うかは任意)
     $user = $this->db_manager->get('User')->fetchByUserName($params['user_name']);
     if (!$user) {
       $this->forward404();
     }
 
     $statuses = $this->db_manager->get('Status')->fetchAllByUserId($user['id']);
+
+    $following = null;
+    if ($this->session->isAuthenticated()) {
+      $my = $this->session->get('user');
+      if ($my['id'] !== $user['id']) {
+        $following = $this->db_manager->get('Following')->isFollowing($my['id'], $user['id']);
+      }
+    }
+
     return $this->render([
       'user'     => $user,
       'statuses' => $statuses,
+      'following' => $following,
+      '_token'    => $this->generateCsrfToken('account/follow')
     ]);
   }
 
